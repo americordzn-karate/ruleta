@@ -733,8 +733,12 @@ async function onSpinEnd(idx) {
   speak(buildSpeech(seg, next));
   addHistory(seg, next);
 
-  /* guardar en BD */
-  await saveResult(next);
+  /* guardar en BD: solo los puntos del giro con su signo, no el total */
+  let puntosGiro;
+  if      (seg.pts === 'half')   puntosGiro = next - prev;   // resultado negativo
+  else if (seg.pts === 'double') puntosGiro = next - prev;   // resultado positivo
+  else                           puntosGiro = seg.pts;        // ya tiene signo correcto
+  await saveResult(puntosGiro);
 
   spinning = false;
 
