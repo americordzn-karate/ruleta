@@ -15,8 +15,6 @@
     --gray-light: #C8C8C8;
     --bg: #1A1A1A;
     --white: #F0EDE4;
-    --red: #C0392B;
-    --green: #1E8449;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -29,11 +27,11 @@
     align-items: center;
   }
 
-  /* ─── OVERLAY DE ADVERTENCIA ─── */
-  #overlay {
+  /* ─── OVERLAY ADVERTENCIA ─── */
+  #overlay-warning {
     position: fixed; inset: 0;
-    background: rgba(0,0,0,0.92);
-    z-index: 999;
+    background: rgba(0,0,0,0.93);
+    z-index: 1000;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -48,28 +46,55 @@
     padding: 2rem 2rem 1.5rem;
     text-align: center;
   }
-  .warning-icon {
-    font-size: 3.5rem;
-    margin-bottom: .75rem;
-    display: block;
-  }
+  .warning-icon { font-size: 3.2rem; margin-bottom: .6rem; display: block; }
   .warning-box h2 {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 2rem;
     color: var(--mustard-light);
     letter-spacing: 2px;
-    margin-bottom: .75rem;
+    margin-bottom: .6rem;
   }
   .warning-box p {
-    font-size: 1rem;
+    font-size: .97rem;
     line-height: 1.6;
     color: var(--gray-light);
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.4rem;
   }
-  .warning-box p strong {
-    color: var(--white);
+  .warning-box p strong { color: var(--white); }
+
+  /* ─── OVERLAY LÍMITE ALCANZADO ─── */
+  #overlay-limit {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.93);
+    z-index: 999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
   }
-  #btn-accept {
+  #overlay-limit.visible { display: flex; }
+  .limit-box {
+    background: #1F1F1F;
+    border: 2px solid #C0392B;
+    border-radius: 12px;
+    max-width: 440px;
+    width: 100%;
+    padding: 2rem;
+    text-align: center;
+  }
+  .limit-box .limit-icon { font-size: 3rem; margin-bottom: .6rem; display: block; }
+  .limit-box h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    color: #E74C3C;
+    letter-spacing: 2px;
+    margin-bottom: .6rem;
+  }
+  .limit-box p { font-size: .97rem; color: var(--gray-light); line-height: 1.6; margin-bottom: 1.4rem; }
+  .limit-box p strong { color: var(--white); }
+
+  /* ─── BOTÓN COMPARTIDO ─── */
+  .btn-primary {
     background: var(--mustard);
     color: var(--black);
     border: none;
@@ -80,9 +105,25 @@
     letter-spacing: 2px;
     cursor: pointer;
     transition: background .2s, transform .1s;
+    display: inline-block;
   }
-  #btn-accept:hover { background: var(--mustard-light); }
-  #btn-accept:active { transform: scale(.97); }
+  .btn-primary:hover { background: var(--mustard-light); }
+  .btn-primary:active { transform: scale(.97); }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--gray-light);
+    border: 1.5px solid var(--gray);
+    border-radius: 8px;
+    padding: .7rem 1.8rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: border-color .2s, color .2s;
+    display: inline-block;
+  }
+  .btn-secondary:hover { border-color: var(--gray-light); color: var(--white); }
 
   /* ─── HEADER ─── */
   header {
@@ -102,23 +143,17 @@
     letter-spacing: 4px;
     color: var(--mustard);
   }
-  .student-info {
-    font-size: .85rem;
-    color: var(--gray-light);
-    text-align: right;
-  }
-  .student-info strong { color: var(--white); }
+  .student-info { font-size: .85rem; color: var(--gray-light); text-align: right; }
 
-  /* ─── SCORE BAR ─── */
+  /* ─── PUNTOS ─── */
   .score-bar {
     width: 100%;
     max-width: 700px;
     margin: 1.25rem auto 0;
-    padding: 0 1rem;
+    padding: 0 1.2rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1rem;
   }
   .score-label {
     font-family: 'Bebas Neue', sans-serif;
@@ -131,32 +166,44 @@
     font-size: 2.8rem;
     letter-spacing: 4px;
     color: var(--mustard-light);
-    transition: color .3s;
+    transition: color .35s;
     min-width: 100px;
-    text-align: center;
+    text-align: right;
   }
   .score-display.gain { color: #58D68D; }
   .score-display.loss { color: #E74C3C; }
+
+  .attempts-bar {
+    width: 100%;
+    max-width: 700px;
+    margin: .2rem auto 0;
+    padding: 0 1.2rem;
+    text-align: right;
+    font-size: .8rem;
+    color: var(--gray);
+    min-height: 1.1rem;
+  }
+  .attempts-bar span { color: var(--mustard-light); font-weight: 700; }
 
   /* ─── RESULTADO ─── */
   .result-banner {
     width: 100%;
     max-width: 700px;
-    margin: .5rem auto 0;
-    padding: 0 1rem;
-    min-height: 2.5rem;
+    margin: .4rem auto 0;
+    padding: 0 1.2rem;
+    min-height: 2.4rem;
     text-align: center;
   }
   .result-text {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.6rem;
+    font-size: 1.55rem;
     letter-spacing: 3px;
-    transition: opacity .4s;
     opacity: 0;
+    transition: opacity .4s;
   }
-  .result-text.show { opacity: 1; }
-  .result-text.gain { color: #58D68D; }
-  .result-text.loss { color: #E74C3C; }
+  .result-text.show   { opacity: 1; }
+  .result-text.gain    { color: #58D68D; }
+  .result-text.loss    { color: #E74C3C; }
   .result-text.special { color: var(--mustard-light); }
 
   /* ─── RULETA ─── */
@@ -164,44 +211,49 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
-    margin-top: 1rem;
-    padding: 0 1rem;
+    gap: .9rem;
+    margin-top: .8rem;
+    padding: 0 1.2rem;
     width: 100%;
     max-width: 520px;
   }
-  .wheel-container {
+  /*
+   * Margen derecho extra para que el marcador (que sobresale 22 px)
+   * no quede cortado en pantallas pequeñas.
+   */
+  .wheel-wrapper {
     position: relative;
-    width: min(90vw, 440px);
-    height: min(90vw, 440px);
+    width: min(86vw, 430px);
+    height: min(86vw, 430px);
+    margin-right: 22px;
   }
-  /* Marcador superior */
+  /*
+   * MARCADOR LADO DERECHO — apunta hacia la izquierda (hacia el centro).
+   * Se ubica en el borde derecho de .wheel-wrapper, centrado en Y.
+   */
   .pointer {
     position: absolute;
-    top: -18px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 16px solid transparent;
-    border-right: 16px solid transparent;
-    border-top: 30px solid var(--mustard);
+    right: -22px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0; height: 0;
+    border-top:    15px solid transparent;
+    border-bottom: 15px solid transparent;
+    border-right:  28px solid var(--mustard);
     z-index: 10;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,.8));
+    filter: drop-shadow(0 2px 5px rgba(0,0,0,.9));
   }
   #wheel {
-    width: 100%;
-    height: 100%;
+    width: 100%; height: 100%;
     border-radius: 50%;
     border: 6px solid var(--mustard-dark);
     box-shadow: 0 0 0 3px #111, 0 8px 32px rgba(0,0,0,.7);
     display: block;
   }
-  /* Centro de la ruleta */
   .hub {
     position: absolute;
     top: 50%; left: 50%;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%, -50%);
     width: 44px; height: 44px;
     border-radius: 50%;
     background: var(--mustard);
@@ -217,7 +269,6 @@
     width: 100%;
     justify-content: center;
     flex-wrap: wrap;
-    margin-top: .5rem;
   }
   .btn-spin {
     background: var(--mustard);
@@ -235,7 +286,7 @@
   }
   .btn-spin:hover:not(:disabled) { background: var(--mustard-light); }
   .btn-spin:active:not(:disabled) { transform: scale(.97); }
-  .btn-spin:disabled { opacity: .45; cursor: not-allowed; }
+  .btn-spin:disabled { opacity: .38; cursor: not-allowed; }
   .btn-portal {
     background: transparent;
     color: var(--gray-light);
@@ -252,25 +303,33 @@
   }
   .btn-portal:hover { border-color: var(--gray-light); color: var(--white); }
 
+  .status-msg {
+    font-size: .82rem;
+    color: var(--gray);
+    font-style: italic;
+    text-align: center;
+    min-height: 1.1rem;
+  }
+
   /* ─── HISTORIAL ─── */
   .history-section {
     width: 100%;
     max-width: 520px;
-    padding: .5rem 1rem 2rem;
-    margin-top: .5rem;
+    padding: .4rem 1.2rem 2rem;
+    margin-top: .2rem;
   }
   .history-section h3 {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 1rem;
+    font-size: .95rem;
     letter-spacing: 3px;
     color: var(--gray);
-    margin-bottom: .5rem;
+    margin-bottom: .4rem;
   }
   .history-list {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    max-height: 160px;
+    max-height: 150px;
     overflow-y: auto;
   }
   .history-item {
@@ -282,122 +341,148 @@
     display: flex;
     justify-content: space-between;
   }
-  .history-item.gain-h { border-left: 3px solid #58D68D; }
-  .history-item.loss-h { border-left: 3px solid #E74C3C; }
+  .history-item.gain-h    { border-left: 3px solid #58D68D; }
+  .history-item.loss-h    { border-left: 3px solid #E74C3C; }
   .history-item.special-h { border-left: 3px solid var(--mustard-light); }
 
   @media (max-width: 480px) {
-    .dojo-title { font-size: 1.2rem; }
-    .score-display { font-size: 2.2rem; }
+    .dojo-title   { font-size: 1.2rem; }
+    .score-display{ font-size: 2.2rem; }
   }
 </style>
 </head>
 <body>
 
-<!-- OVERLAY ADVERTENCIA -->
-<div id="overlay">
+<!-- ═══ OVERLAY ADVERTENCIA ═══ -->
+<div id="overlay-warning">
   <div class="warning-box">
     <span class="warning-icon">⚠️</span>
     <h2>¡ADVERTENCIA!</h2>
-    <p>Al jugar a la <strong>Ruleta de Puntos</strong> puedes <strong>ganar muchos puntos</strong>... pero también <strong>perder muchos</strong>, incluso <strong>la mitad o todos tus puntos acumulados</strong>.</p>
+    <p>
+      Al jugar a la <strong>Ruleta de Puntos</strong> puedes
+      <strong>ganar muchos puntos</strong>… pero también
+      <strong>perder muchos</strong>, incluso
+      <strong>la mitad de tus puntos acumulados</strong>.
+    </p>
     <p>¿Estás seguro/a de que deseas continuar?</p>
-    <button id="btn-accept">ESTOY DE ACUERDO</button>
+    <button class="btn-primary" id="btn-accept">ESTOY DE ACUERDO</button>
   </div>
 </div>
 
-<!-- HEADER -->
+<!-- ═══ OVERLAY LÍMITE ALCANZADO ═══ -->
+<div id="overlay-limit">
+  <div class="limit-box">
+    <span class="limit-icon">🚫</span>
+    <h2>LÍMITE ALCANZADO</h2>
+    <p>
+      Has alcanzado el <strong>máximo de intentos permitidos</strong>
+      para este reto hoy.<br>¡Vuelve mañana para seguir jugando!
+    </p>
+    <button class="btn-secondary" id="btn-portal-limit"
+            style="width:100%;max-width:100%;font-size:1.5rem;text-align:center;">
+      ← REGRESAR AL PORTAL
+    </button>
+  </div>
+</div>
+
+<!-- ═══ HEADER ═══ -->
 <header>
   <div class="dojo-title">SENSHI-KAN · RULETA</div>
   <div class="student-info">
-    <span id="hdr-nombre">—</span><br>
+    <strong id="hdr-nombre">—</strong><br>
     <span style="font-size:.75rem;color:var(--gray);">Reto: </span>
     <span id="hdr-reto" style="font-size:.75rem;color:var(--mustard);">—</span>
   </div>
 </header>
 
-<!-- PUNTOS -->
+<!-- ═══ PUNTOS ═══ -->
 <div class="score-bar">
   <span class="score-label">TUS PUNTOS</span>
   <span class="score-display" id="score-display">—</span>
 </div>
+<div class="attempts-bar" id="attempts-bar"></div>
 
-<!-- BANNER RESULTADO -->
+<!-- ═══ RESULTADO ═══ -->
 <div class="result-banner">
   <div class="result-text" id="result-text"></div>
 </div>
 
-<!-- RULETA -->
+<!-- ═══ RULETA ═══ -->
 <div class="wheel-section">
-  <div class="wheel-container">
-    <div class="pointer"></div>
+  <div class="wheel-wrapper">
+    <div class="pointer"></div><!-- marcador lado derecho -->
     <canvas id="wheel"></canvas>
     <div class="hub"></div>
   </div>
 
+  <div class="status-msg" id="status-msg">Verificando disponibilidad...</div>
+
   <div class="btn-row">
-    <button class="btn-spin" id="btn-spin" disabled>GIRAR</button>
+    <button class="btn-spin"   id="btn-spin"   disabled>GIRAR</button>
     <button class="btn-portal" id="btn-portal">← PORTAL</button>
   </div>
 </div>
 
-<!-- HISTORIAL -->
+<!-- ═══ HISTORIAL ═══ -->
 <div class="history-section">
   <h3>HISTORIAL DE GIROS</h3>
   <div class="history-list" id="history-list"></div>
 </div>
 
+<!-- ═══════════════════════════════════════════
+     SCRIPT
+════════════════════════════════════════════ -->
 <script>
+/* ─── constantes ─── */
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwX5w8iiwkJVbGtpz-5f20U9jue2MC0vouE3blkHXo9CIMqg9bvCZrAYE8WKxH4gXGWzg/exec';
 const PORTAL_URL = 'https://americordzn-karate.github.io/retos/';
 
-/* ── parámetros ── */
-const params = new URLSearchParams(location.search);
+/* ─── parámetros del portal ─── */
+const urlParams = new URLSearchParams(location.search);
 const alumno = {
-  nombre:   params.get('nombre')   || '',
-  edad:     params.get('edad')     || '',
-  reto:     params.get('reto')     || 'RULETA',
-  estatura: params.get('estatura') || '',
-  peso:     params.get('peso')     || ''
+  nombre:   urlParams.get('nombre')   || '',
+  edad:     urlParams.get('edad')     || '',
+  reto:     urlParams.get('reto')     || 'RULETA',
+  estatura: urlParams.get('estatura') || '',
+  peso:     urlParams.get('peso')     || ''
 };
-
 document.getElementById('hdr-nombre').textContent = alumno.nombre || 'Alumno';
 document.getElementById('hdr-reto').textContent   = alumno.reto;
 
-/* ── secciones ── */
+/* ─── segmentos (orden exacto) ─── */
 const SEGMENTS = [
-  { label: 'GANAS\n1 PUNTO',                  pts: 1,        type:'gain'    },
-  { label: 'PIERDES\n1 PUNTO',                pts: -1,       type:'loss'    },
-  { label: 'GANAS\n5 PUNTOS',                 pts: 5,        type:'gain'    },
-  { label: 'PIERDES\n5 PUNTOS',               pts: -5,       type:'loss'    },
-  { label: 'GANAS\n10 PUNTOS',                pts: 10,       type:'gain'    },
-  { label: 'PIERDES\n10 PUNTOS',              pts: -10,      type:'loss'    },
-  { label: 'PIERDES LA\nMITAD',               pts: 'half',   type:'special' },
-  { label: '¡GANAS\n100 PUNTOS!',             pts: 100,      type:'gain'    },
-  { label: 'PIERDES\n5 PUNTOS',               pts: -5,       type:'loss'    },
-  { label: 'PIERDES\n1 PUNTO',                pts: -1,       type:'loss'    },
-  { label: 'PIERDES\n10 PUNTOS',              pts: -10,      type:'loss'    },
-  { label: '¡DOBLE DE\nTUS PUNTOS!',          pts: 'double', type:'special' },
-  { label: 'PIERDES\n10 PUNTOS',              pts: -10,      type:'loss'    },
-  { label: 'PIERDES\n5 PUNTOS',               pts: -5,       type:'loss'    },
-  { label: 'GANAS\n1 PUNTO',                  pts: 1,        type:'gain'    },
-  { label: 'PIERDES\n5 PUNTOS',               pts: -5,       type:'loss'    },
-  { label: 'GANAS\n1 PUNTO',                  pts: 1,        type:'gain'    },
-  { label: 'PIERDES\n1 PUNTO',                pts: -1,       type:'loss'    },
+  { label: 'GANAS\n1 PUNTO',         pts: 1,        type: 'gain'    },
+  { label: 'PIERDES\n1 PUNTO',       pts: -1,       type: 'loss'    },
+  { label: 'GANAS\n5 PUNTOS',        pts: 5,        type: 'gain'    },
+  { label: 'PIERDES\n5 PUNTOS',      pts: -5,       type: 'loss'    },
+  { label: 'GANAS\n10 PUNTOS',       pts: 10,       type: 'gain'    },
+  { label: 'PIERDES\n10 PUNTOS',     pts: -10,      type: 'loss'    },
+  { label: 'PIERDES LA\nMITAD',      pts: 'half',   type: 'special' },
+  { label: '¡GANAS\n100 PUNTOS!',    pts: 100,      type: 'gain'    },
+  { label: 'PIERDES\n5 PUNTOS',      pts: -5,       type: 'loss'    },
+  { label: 'PIERDES\n1 PUNTO',       pts: -1,       type: 'loss'    },
+  { label: 'PIERDES\n10 PUNTOS',     pts: -10,      type: 'loss'    },
+  { label: '¡DOBLE DE\nTUS PUNTOS!', pts: 'double', type: 'special' },
+  { label: 'PIERDES\n10 PUNTOS',     pts: -10,      type: 'loss'    },
+  { label: 'PIERDES\n5 PUNTOS',      pts: -5,       type: 'loss'    },
+  { label: 'GANAS\n1 PUNTO',         pts: 1,        type: 'gain'    },
+  { label: 'PIERDES\n5 PUNTOS',      pts: -5,       type: 'loss'    },
+  { label: 'GANAS\n1 PUNTO',         pts: 1,        type: 'gain'    },
+  { label: 'PIERDES\n1 PUNTO',       pts: -1,       type: 'loss'    }
 ];
-const N = SEGMENTS.length;
+const N     = SEGMENTS.length;
 const SLICE = (2 * Math.PI) / N;
 
-/* paleta: mustaza / negro / gris rotando */
-const PALETTE = ['#D4A017','#111111','#5A5A5A'];
-const TEXT_COLORS = ['#111111','#D4A017','#F0EDE4'];
+/* paleta alternante: mostaza / negro / gris */
+const FILL  = ['#D4A017', '#111111', '#5A5A5A'];
+const TCLR  = ['#111111', '#D4A017', '#F0EDE4'];
 
-/* ── canvas ── */
+/* ─── canvas ─── */
 const canvas = document.getElementById('wheel');
-let size, cx, cy, radius;
+let size, cx, cy, radius, currentAngle = 0;
 
-function resize(){
-  const cont = canvas.parentElement;
-  size = cont.offsetWidth;
+function resize() {
+  size   = canvas.parentElement.offsetWidth;
   canvas.width  = size;
   canvas.height = size;
   cx = cy = size / 2;
@@ -405,84 +490,158 @@ function resize(){
   drawWheel(currentAngle);
 }
 
-let currentAngle = 0;
-
-function drawWheel(angle){
+function drawWheel(angle) {
   const ctx = canvas.getContext('2d');
-  ctx.clearRect(0,0,size,size);
-  for(let i = 0; i < N; i++){
-    const start = angle + i * SLICE;
-    const end   = start + SLICE;
-    const ci    = i % 3;
+  ctx.clearRect(0, 0, size, size);
+  for (let i = 0; i < N; i++) {
+    const a0 = angle + i * SLICE;
+    const a1 = a0 + SLICE;
+    const ci = i % 3;
     ctx.beginPath();
-    ctx.moveTo(cx,cy);
-    ctx.arc(cx,cy,radius,start,end);
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, radius, a0, a1);
     ctx.closePath();
-    ctx.fillStyle   = PALETTE[ci];
-    ctx.strokeStyle = '#333';
+    ctx.fillStyle   = FILL[ci];
+    ctx.strokeStyle = '#2a2a2a';
     ctx.lineWidth   = 1;
     ctx.fill();
     ctx.stroke();
     /* texto */
     ctx.save();
-    ctx.translate(cx,cy);
-    ctx.rotate(start + SLICE/2);
-    ctx.textAlign    = 'right';
-    ctx.fillStyle    = TEXT_COLORS[ci];
+    ctx.translate(cx, cy);
+    ctx.rotate(a0 + SLICE / 2);
+    ctx.textAlign = 'right';
+    ctx.fillStyle = TCLR[ci];
+    const fs    = Math.max(9, Math.round(size * 0.027));
+    ctx.font    = `700 ${fs}px Barlow, sans-serif`;
+    const tr    = radius * 0.88;
     const lines = SEGMENTS[i].label.split('\n');
-    const fs = Math.max(9, Math.round(size * 0.027));
-    ctx.font = `700 ${fs}px Barlow, sans-serif`;
-    const tr = radius * 0.88;
-    lines.forEach((ln,li)=>{
-      const yOff = (li - (lines.length-1)/2) * (fs * 1.25);
-      ctx.fillText(ln, tr, yOff + fs/3);
+    lines.forEach((ln, li) => {
+      ctx.fillText(ln, tr, (li - (lines.length - 1) / 2) * fs * 1.25 + fs / 3);
     });
     ctx.restore();
   }
 }
 
-/* ── puntos ── */
-let currentPoints = null;
-
-async function fetchPoints(){
-  try {
-    const r = await fetch(`${SCRIPT_URL}?accion=getPuntos&nombre=${encodeURIComponent(alumno.nombre)}`);
-    const d = await r.json();
-    if(d.puntos !== undefined){
-      currentPoints = d.puntos;
-      updateScoreUI(currentPoints, null);
-    }
-  } catch(e){ console.warn('No se pudo obtener puntos:', e); }
+/*
+ * El marcador apunta a las 3 en punto = ángulo 0 (eje X positivo).
+ * El segmento i ocupa [currentAngle + i·SLICE, currentAngle + (i+1)·SLICE].
+ * Segmento bajo el marcador: aquel i donde el ángulo 0 queda dentro.
+ * Equivalentemente: normalizar (-currentAngle) mod 2π y dividir por SLICE.
+ */
+function getWinner(angle) {
+  const norm = ((-angle) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+  return Math.floor(norm / SLICE) % N;
 }
 
-async function savePoints(newPts){
+/* ─── estado ─── */
+let currentPoints = 0;
+let attemptsToday = 0;
+let maxAttempts   = 999;
+let spinning      = false;
+
+/* ─── GET: trae todo desde el Apps Script ─── */
+async function fetchData() {
+  const r = await fetch(SCRIPT_URL);
+  return r.json();
+}
+
+/*
+ * Inicializa puntos y verifica límite de intentos.
+ * - puntosTotales[nombre]  → puntos actuales del alumno
+ * - intentosHoy["nombre_reto"] → intentos realizados hoy
+ * - retos[].diario_permitido   → máximo diario del reto
+ */
+async function initData() {
+  setStatus('Verificando disponibilidad...');
+  try {
+    const data = await fetchData();
+
+    /* puntos actuales */
+    const nombre = alumno.nombre.trim();
+    currentPoints = (data.puntosTotales && data.puntosTotales[nombre]) || 0;
+    updateScoreUI(currentPoints, null);
+
+    /* máximo diario para este reto */
+    const retoNombre = alumno.reto.trim().toUpperCase();
+    if (data.retos) {
+      const retoInfo = data.retos.find(
+        r => r.nombre.trim().toUpperCase() === retoNombre
+      );
+      if (retoInfo && retoInfo.diario_permitido !== undefined) {
+        maxAttempts = Number(retoInfo.diario_permitido);
+      }
+    }
+
+    /* intentos realizados hoy */
+    const hashKey = `${nombre}_${alumno.reto.trim()}`;
+    attemptsToday = (data.intentosHoy && data.intentosHoy[hashKey]) || 0;
+
+    setStatus('');
+    checkLimit();
+
+  } catch (err) {
+    console.warn('Error al obtener datos:', err);
+    /* fallback: no bloqueamos al alumno */
+    setStatus('');
+    enableSpin(true);
+  }
+}
+
+/* Verifica si el alumno puede girar; muestra overlay si llegó al límite */
+function checkLimit() {
+  if (attemptsToday >= maxAttempts) {
+    enableSpin(false);
+    document.getElementById('overlay-limit').classList.add('visible');
+  } else {
+    updateAttemptsBar();
+    enableSpin(true);
+  }
+}
+
+/* ─── POST: registra resultado ─── */
+async function saveResult(puntos) {
   try {
     const fd = new FormData();
-    fd.append('accion','updatePuntos');
-    fd.append('nombre', alumno.nombre);
-    fd.append('puntos', newPts);
-    fd.append('reto',   alumno.reto);
-    await fetch(SCRIPT_URL, { method:'POST', body: fd, mode:'no-cors' });
-  } catch(e){ console.warn('No se pudo guardar puntos:', e); }
+    fd.append('nombre_alumno', alumno.nombre);
+    fd.append('nombre_reto',   alumno.reto);
+    fd.append('puntos',        puntos);
+    await fetch(SCRIPT_URL, { method: 'POST', body: fd, mode: 'no-cors' });
+  } catch (e) {
+    console.warn('No se pudo guardar resultado:', e);
+  }
 }
 
-function updateScoreUI(pts, flash){
+/* ─── UI helpers ─── */
+function updateScoreUI(pts, flash) {
   const el = document.getElementById('score-display');
-  el.textContent = pts !== null ? pts : '—';
-  el.className = 'score-display';
-  if(flash){ el.classList.add(flash); setTimeout(()=>el.classList.remove(flash),1200); }
+  el.textContent = pts;
+  el.className   = 'score-display';
+  if (flash) { el.classList.add(flash); setTimeout(() => el.classList.remove(flash), 1200); }
 }
 
-/* ── voz ── */
-function speak(text){
-  if(!('speechSynthesis' in window)) return;
+function updateAttemptsBar() {
+  const remaining = Math.max(0, maxAttempts - attemptsToday);
+  const el = document.getElementById('attempts-bar');
+  el.innerHTML = `Intentos restantes hoy: <span>${remaining}</span>`;
+}
+
+function setStatus(msg) {
+  document.getElementById('status-msg').textContent = msg;
+}
+
+function enableSpin(yes) {
+  document.getElementById('btn-spin').disabled = !yes;
+}
+
+/* ─── voz ─── */
+function speak(text) {
+  if (!('speechSynthesis' in window)) return;
   window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'es-MX';
-  u.rate = .95;
-  u.pitch = 1.1;
-  u.onerror = ()=>{
-    setTimeout(()=>{
+  u.lang = 'es-MX'; u.rate = .95; u.pitch = 1.1;
+  u.onerror = () => {
+    setTimeout(() => {
       const u2 = new SpeechSynthesisUtterance(text);
       u2.lang = 'es-MX'; u2.rate = .95;
       window.speechSynthesis.speak(u2);
@@ -491,115 +650,134 @@ function speak(text){
   window.speechSynthesis.speak(u);
 }
 
-function buildSpeechText(seg, before, after){
-  if(seg.pts === 'half')   return `Pierdes la mitad de tus puntos. Tienes ${after} puntos.`;
-  if(seg.pts === 'double') return `¡Doble de tus puntos! Ahora tienes ${after} puntos.`;
-  if(seg.pts > 0)  return `¡Ganas ${seg.pts} punto${seg.pts!==1?'s':''}! Ahora tienes ${after}.`;
-  if(seg.pts < 0)  return `Pierdes ${Math.abs(seg.pts)} punto${Math.abs(seg.pts)!==1?'s':''}. Te quedan ${after}.`;
-  return `${seg.label.replace('\n',' ')}. Tienes ${after} puntos.`;
+function buildSpeech(seg, after) {
+  if (seg.pts === 'half')   return `Pierdes la mitad de tus puntos. Ahora tienes ${after} puntos.`;
+  if (seg.pts === 'double') return `¡Doble de tus puntos! Ahora tienes ${after} puntos.`;
+  const abs = Math.abs(seg.pts);
+  if (seg.pts > 0) return `¡Ganas ${abs} punto${abs !== 1 ? 's' : ''}! Ahora tienes ${after}.`;
+  return `Pierdes ${abs} punto${abs !== 1 ? 's' : ''}. Te quedan ${after}.`;
 }
 
-function resultLabel(seg, after){
-  if(seg.pts === 'half')   return `PIERDES LA MITAD → ${after} pts`;
-  if(seg.pts === 'double') return `¡DOBLE! → ${after} pts`;
-  if(seg.pts > 0)  return `+${seg.pts} → ${after} pts`;
+function resultLabel(seg, after) {
+  if (seg.pts === 'half')   return `PIERDES LA MITAD → ${after} pts`;
+  if (seg.pts === 'double') return `¡DOBLE! → ${after} pts`;
+  if (seg.pts > 0)          return `+${seg.pts} → ${after} pts`;
   return `${seg.pts} → ${after} pts`;
 }
 
-/* ── animación de giro ── */
-let spinning = false;
-
-function spin(){
-  if(spinning) return;
+/* ─── animación ─── */
+function spin() {
+  if (spinning) return;
   spinning = true;
-  document.getElementById('btn-spin').disabled = true;
+  enableSpin(false);
+  setStatus('');
 
-  const targetIndex = Math.floor(Math.random() * N);
-  /* el marcador está en la parte superior (ángulo -PI/2 = -90°).
-     Queremos que el centro de la sección 'targetIndex' quede ahí. */
-  const targetAngle = -(targetIndex + 0.5) * SLICE - Math.PI/2;
-  const extraSpins  = 5 + Math.random() * 4;   /* 5-9 vueltas */
-  const totalRot    = extraSpins * 2 * Math.PI + (targetAngle - (currentAngle % (2*Math.PI)));
+  /* destino aleatorio */
+  const targetIdx = Math.floor(Math.random() * N);
 
-  const duration = 4000 + Math.random() * 1500;
-  const start    = performance.now();
-  const startAngle = currentAngle;
+  /*
+   * Queremos que el CENTRO del segmento targetIdx quede en ángulo 0 (marcador derecho).
+   * Centro del segmento i en el disco: (i + 0.5) * SLICE
+   * Para que ese punto esté en 0: currentAngle_final = -(i + 0.5) * SLICE  (+k·2π)
+   * Elegimos k tal que finalAngle > currentAngle y se añaden ≥5 vueltas completas.
+   */
+  const segCenter  = (targetIdx + 0.5) * SLICE;
+  const extraSpins = (5 + Math.floor(Math.random() * 5)) * 2 * Math.PI;
+  let finalAngle   = -segCenter;
+  /* ajustar para que finalAngle > currentAngle */
+  finalAngle += Math.ceil((currentAngle - finalAngle) / (2 * Math.PI)) * 2 * Math.PI;
+  finalAngle += extraSpins;
 
-  function easeOut(t){ return 1 - Math.pow(1-t, 4); }
+  const duration  = 4200 + Math.random() * 1800;
+  const startA    = currentAngle;
+  const totalRot  = finalAngle - startA;
+  const t0        = performance.now();
 
-  function frame(now){
-    const elapsed = now - start;
-    const t = Math.min(elapsed / duration, 1);
-    currentAngle = startAngle + totalRot * easeOut(t);
+  function easeOut(t) { return 1 - Math.pow(1 - t, 4); }
+
+  (function frame(now) {
+    const t = Math.min((now - t0) / duration, 1);
+    currentAngle = startA + totalRot * easeOut(t);
     drawWheel(currentAngle);
-    if(t < 1){
-      requestAnimationFrame(frame);
-    } else {
-      currentAngle = startAngle + totalRot;
-      drawWheel(currentAngle);
-      onSpinEnd(targetIndex);
-    }
-  }
-  requestAnimationFrame(frame);
+    if (t < 1) { requestAnimationFrame(frame); }
+    else        { currentAngle = finalAngle; drawWheel(currentAngle); onSpinEnd(); }
+  })(performance.now());
 }
 
-function onSpinEnd(idx){
-  const seg = SEGMENTS[idx];
-  const before = currentPoints || 0;
-  let after;
-  if(seg.pts === 'half')        after = Math.floor(before / 2);
-  else if(seg.pts === 'double') after = before * 2;
-  else                          after = Math.max(0, before + seg.pts);
+async function onSpinEnd() {
+  /*
+   * Leemos qué segmento apunta el marcador usando getWinner(),
+   * que es la fuente de verdad independientemente del índice calculado.
+   */
+  const idx  = getWinner(currentAngle);
+  const seg  = SEGMENTS[idx];
+  const prev = currentPoints;
 
-  currentPoints = after;
-  updateScoreUI(after, seg.type === 'gain' || seg.pts === 'double' ? 'gain' : 'loss');
-  savePoints(after);
+  let next;
+  if      (seg.pts === 'half')   next = Math.floor(prev / 2);
+  else if (seg.pts === 'double') next = prev * 2;
+  else                           next = Math.max(0, prev + seg.pts);
 
-  const resEl = document.getElementById('result-text');
-  resEl.textContent  = resultLabel(seg, after);
-  resEl.className    = `result-text show ${seg.type}`;
+  currentPoints = next;
+  attemptsToday++;
 
-  speak(buildSpeechText(seg, before, after));
-  addHistory(seg, after);
+  /* UI */
+  const flash = (seg.pts === 'double' || (typeof seg.pts === 'number' && seg.pts > 0))
+                ? 'gain' : 'loss';
+  updateScoreUI(next, flash);
+
+  const resEl       = document.getElementById('result-text');
+  resEl.textContent = resultLabel(seg, next);
+  resEl.className   = `result-text show ${seg.type}`;
+
+  speak(buildSpeech(seg, next));
+  addHistory(seg, next);
+
+  /* guardar en BD */
+  await saveResult(next);
 
   spinning = false;
-  document.getElementById('btn-spin').disabled = false;
+
+  /* verificar límite tras el giro */
+  setStatus('');
+  if (attemptsToday >= maxAttempts) {
+    enableSpin(false);
+    document.getElementById('overlay-limit').classList.add('visible');
+  } else {
+    updateAttemptsBar();
+    enableSpin(true);
+  }
 }
 
-/* ── historial ── */
-function addHistory(seg, pts){
+/* ─── historial ─── */
+function addHistory(seg, pts) {
   const list = document.getElementById('history-list');
   const item = document.createElement('div');
   item.className = `history-item ${seg.type}-h`;
-  const label = seg.label.replace('\n',' ');
-  item.innerHTML = `<span>${label}</span><span>${pts} pts</span>`;
+  item.innerHTML = `<span>${seg.label.replace('\n', ' ')}</span><span>${pts} pts</span>`;
   list.prepend(item);
 }
 
-/* ── portal ── */
-document.getElementById('btn-portal').addEventListener('click',()=>{
-  const base = PORTAL_URL;
+/* ─── navegación ─── */
+function goPortal() {
   const q = new URLSearchParams({
     nombre: alumno.nombre, edad: alumno.edad,
-    reto: alumno.reto, estatura: alumno.estatura, peso: alumno.peso
+    reto:   alumno.reto,   estatura: alumno.estatura, peso: alumno.peso
   });
-  location.href = base + '?' + q.toString();
+  location.href = PORTAL_URL + '?' + q.toString();
+}
+document.getElementById('btn-portal').addEventListener('click',       goPortal);
+document.getElementById('btn-portal-limit').addEventListener('click', goPortal);
+
+/* ─── aceptar advertencia ─── */
+document.getElementById('btn-accept').addEventListener('click', () => {
+  document.getElementById('overlay-warning').style.display = 'none';
 });
 
-/* ── aceptar advertencia ── */
-document.getElementById('btn-accept').addEventListener('click',()=>{
-  document.getElementById('overlay').style.display = 'none';
-});
-
-/* ── spin button ── */
 document.getElementById('btn-spin').addEventListener('click', spin);
 
-/* ── inicialización ── */
-window.addEventListener('load', async ()=>{
-  resize();
-  await fetchPoints();
-  document.getElementById('btn-spin').disabled = false;
-});
+/* ─── init ─── */
+window.addEventListener('load', () => { resize(); initData(); });
 window.addEventListener('resize', resize);
 </script>
 </body>
