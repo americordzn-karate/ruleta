@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ruleta – Senshi-Kan</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --mustard: #D4A017;
+    --mustard-dark: #A07810;
+    --mustard-light: #F5CE60;
+    --black: #111111;
+    --gray: #5A5A5A;
+    --gray-light: #C8C8C8;
+    --bg: #1A1A1A;
+    --white: #F0EDE4;
+    --red: #C0392B;
+    --green: #1E8449;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    font-family: 'Barlow', sans-serif;
+    color: var(--white);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* ─── OVERLAY DE ADVERTENCIA ─── */
+  #overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.92);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+  .warning-box {
+    background: #1F1F1F;
+    border: 2px solid var(--mustard);
+    border-radius: 12px;
+    max-width: 480px;
+    width: 100%;
+    padding: 2rem 2rem 1.5rem;
+    text-align: center;
+  }
+  .warning-icon {
+    font-size: 3.5rem;
+    margin-bottom: .75rem;
+    display: block;
+  }
+  .warning-box h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    color: var(--mustard-light);
+    letter-spacing: 2px;
+    margin-bottom: .75rem;
+  }
+  .warning-box p {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--gray-light);
+    margin-bottom: 1.5rem;
+  }
+  .warning-box p strong {
+    color: var(--white);
+  }
+  #btn-accept {
+    background: var(--mustard);
+    color: var(--black);
+    border: none;
+    border-radius: 8px;
+    padding: .75rem 2.5rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: background .2s, transform .1s;
+  }
+  #btn-accept:hover { background: var(--mustard-light); }
+  #btn-accept:active { transform: scale(.97); }
+
+  /* ─── HEADER ─── */
+  header {
+    width: 100%;
+    background: var(--black);
+    border-bottom: 3px solid var(--mustard);
+    padding: .75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: .5rem;
+  }
+  .dojo-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 4px;
+    color: var(--mustard);
+  }
+  .student-info {
+    font-size: .85rem;
+    color: var(--gray-light);
+    text-align: right;
+  }
+  .student-info strong { color: var(--white); }
+
+  /* ─── SCORE BAR ─── */
+  .score-bar {
+    width: 100%;
+    max-width: 700px;
+    margin: 1.25rem auto 0;
+    padding: 0 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .score-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 3px;
+    color: var(--gray-light);
+  }
+  .score-display {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.8rem;
+    letter-spacing: 4px;
+    color: var(--mustard-light);
+    transition: color .3s;
+    min-width: 100px;
+    text-align: center;
+  }
+  .score-display.gain { color: #58D68D; }
+  .score-display.loss { color: #E74C3C; }
+
+  /* ─── RESULTADO ─── */
+  .result-banner {
+    width: 100%;
+    max-width: 700px;
+    margin: .5rem auto 0;
+    padding: 0 1rem;
+    min-height: 2.5rem;
+    text-align: center;
+  }
+  .result-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 3px;
+    transition: opacity .4s;
+    opacity: 0;
+  }
+  .result-text.show { opacity: 1; }
+  .result-text.gain { color: #58D68D; }
+  .result-text.loss { color: #E74C3C; }
+  .result-text.special { color: var(--mustard-light); }
+
+  /* ─── RULETA ─── */
+  .wheel-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding: 0 1rem;
+    width: 100%;
+    max-width: 520px;
+  }
+  .wheel-container {
+    position: relative;
+    width: min(90vw, 440px);
+    height: min(90vw, 440px);
+  }
+  /* Marcador superior */
+  .pointer {
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 16px solid transparent;
+    border-right: 16px solid transparent;
+    border-top: 30px solid var(--mustard);
+    z-index: 10;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,.8));
+  }
+  #wheel {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 6px solid var(--mustard-dark);
+    box-shadow: 0 0 0 3px #111, 0 8px 32px rgba(0,0,0,.7);
+    display: block;
+  }
+  /* Centro de la ruleta */
+  .hub {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--mustard);
+    border: 4px solid var(--black);
+    z-index: 5;
+    box-shadow: 0 2px 8px rgba(0,0,0,.8);
+  }
+
+  /* ─── BOTONES ─── */
+  .btn-row {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: .5rem;
+  }
+  .btn-spin {
+    background: var(--mustard);
+    color: var(--black);
+    border: none;
+    border-radius: 8px;
+    padding: .7rem 2.5rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: background .2s, transform .1s, opacity .2s;
+    flex: 1 1 140px;
+    max-width: 220px;
+  }
+  .btn-spin:hover:not(:disabled) { background: var(--mustard-light); }
+  .btn-spin:active:not(:disabled) { transform: scale(.97); }
+  .btn-spin:disabled { opacity: .45; cursor: not-allowed; }
+  .btn-portal {
+    background: transparent;
+    color: var(--gray-light);
+    border: 1.5px solid var(--gray);
+    border-radius: 8px;
+    padding: .7rem 1.8rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: border-color .2s, color .2s;
+    flex: 1 1 140px;
+    max-width: 220px;
+  }
+  .btn-portal:hover { border-color: var(--gray-light); color: var(--white); }
+
+  /* ─── HISTORIAL ─── */
+  .history-section {
+    width: 100%;
+    max-width: 520px;
+    padding: .5rem 1rem 2rem;
+    margin-top: .5rem;
+  }
+  .history-section h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 3px;
+    color: var(--gray);
+    margin-bottom: .5rem;
+  }
+  .history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-height: 160px;
+    overflow-y: auto;
+  }
+  .history-item {
+    font-size: .8rem;
+    color: var(--gray-light);
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: rgba(255,255,255,.04);
+    display: flex;
+    justify-content: space-between;
+  }
+  .history-item.gain-h { border-left: 3px solid #58D68D; }
+  .history-item.loss-h { border-left: 3px solid #E74C3C; }
+  .history-item.special-h { border-left: 3px solid var(--mustard-light); }
+
+  @media (max-width: 480px) {
+    .dojo-title { font-size: 1.2rem; }
+    .score-display { font-size: 2.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- OVERLAY ADVERTENCIA -->
+<div id="overlay">
+  <div class="warning-box">
+    <span class="warning-icon">⚠️</span>
+    <h2>¡ADVERTENCIA!</h2>
+    <p>Al jugar a la <strong>Ruleta de Puntos</strong> puedes <strong>ganar muchos puntos</strong>... pero también <strong>perder muchos</strong>, incluso <strong>la mitad o todos tus puntos acumulados</strong>.</p>
+    <p>¿Estás seguro/a de que deseas continuar?</p>
+    <button id="btn-accept">ESTOY DE ACUERDO</button>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="dojo-title">SENSHI-KAN · RULETA</div>
+  <div class="student-info">
+    <span id="hdr-nombre">—</span><br>
+    <span style="font-size:.75rem;color:var(--gray);">Reto: </span>
+    <span id="hdr-reto" style="font-size:.75rem;color:var(--mustard);">—</span>
+  </div>
+</header>
+
+<!-- PUNTOS -->
+<div class="score-bar">
+  <span class="score-label">TUS PUNTOS</span>
+  <span class="score-display" id="score-display">—</span>
+</div>
+
+<!-- BANNER RESULTADO -->
+<div class="result-banner">
+  <div class="result-text" id="result-text"></div>
+</div>
+
+<!-- RULETA -->
+<div class="wheel-section">
+  <div class="wheel-container">
+    <div class="pointer"></div>
+    <canvas id="wheel"></canvas>
+    <div class="hub"></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-spin" id="btn-spin" disabled>GIRAR</button>
+    <button class="btn-portal" id="btn-portal">← PORTAL</button>
+  </div>
+</div>
+
+<!-- HISTORIAL -->
+<div class="history-section">
+  <h3>HISTORIAL DE GIROS</h3>
+  <div class="history-list" id="history-list"></div>
+</div>
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwX5w8iiwkJVbGtpz-5f20U9jue2MC0vouE3blkHXo9CIMqg9bvCZrAYE8WKxH4gXGWzg/exec';
+const PORTAL_URL = 'https://americordzn-karate.github.io/retos/';
+
+/* ── parámetros ── */
+const params = new URLSearchParams(location.search);
+const alumno = {
+  nombre:   params.get('nombre')   || '',
+  edad:     params.get('edad')     || '',
+  reto:     params.get('reto')     || 'RULETA',
+  estatura: params.get('estatura') || '',
+  peso:     params.get('peso')     || ''
+};
+
+document.getElementById('hdr-nombre').textContent = alumno.nombre || 'Alumno';
+document.getElementById('hdr-reto').textContent   = alumno.reto;
+
+/* ── secciones ── */
+const SEGMENTS = [
+  { label: 'GANAS\n1 PUNTO',                  pts: 1,        type:'gain'    },
+  { label: 'PIERDES\n1 PUNTO',                pts: -1,       type:'loss'    },
+  { label: 'GANAS\n5 PUNTOS',                 pts: 5,        type:'gain'    },
+  { label: 'PIERDES\n5 PUNTOS',               pts: -5,       type:'loss'    },
+  { label: 'GANAS\n10 PUNTOS',                pts: 10,       type:'gain'    },
+  { label: 'PIERDES\n10 PUNTOS',              pts: -10,      type:'loss'    },
+  { label: 'PIERDES LA\nMITAD',               pts: 'half',   type:'special' },
+  { label: '¡GANAS\n100 PUNTOS!',             pts: 100,      type:'gain'    },
+  { label: 'PIERDES\n5 PUNTOS',               pts: -5,       type:'loss'    },
+  { label: 'PIERDES\n1 PUNTO',                pts: -1,       type:'loss'    },
+  { label: 'PIERDES\n10 PUNTOS',              pts: -10,      type:'loss'    },
+  { label: '¡DOBLE DE\nTUS PUNTOS!',          pts: 'double', type:'special' },
+  { label: 'PIERDES\n10 PUNTOS',              pts: -10,      type:'loss'    },
+  { label: 'PIERDES\n5 PUNTOS',               pts: -5,       type:'loss'    },
+  { label: 'GANAS\n1 PUNTO',                  pts: 1,        type:'gain'    },
+  { label: 'PIERDES\n5 PUNTOS',               pts: -5,       type:'loss'    },
+  { label: 'GANAS\n1 PUNTO',                  pts: 1,        type:'gain'    },
+  { label: 'PIERDES\n1 PUNTO',                pts: -1,       type:'loss'    },
+];
+const N = SEGMENTS.length;
+const SLICE = (2 * Math.PI) / N;
+
+/* paleta: mustaza / negro / gris rotando */
+const PALETTE = ['#D4A017','#111111','#5A5A5A'];
+const TEXT_COLORS = ['#111111','#D4A017','#F0EDE4'];
+
+/* ── canvas ── */
+const canvas = document.getElementById('wheel');
+let size, cx, cy, radius;
+
+function resize(){
+  const cont = canvas.parentElement;
+  size = cont.offsetWidth;
+  canvas.width  = size;
+  canvas.height = size;
+  cx = cy = size / 2;
+  radius = size / 2 - 4;
+  drawWheel(currentAngle);
+}
+
+let currentAngle = 0;
+
+function drawWheel(angle){
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,size,size);
+  for(let i = 0; i < N; i++){
+    const start = angle + i * SLICE;
+    const end   = start + SLICE;
+    const ci    = i % 3;
+    ctx.beginPath();
+    ctx.moveTo(cx,cy);
+    ctx.arc(cx,cy,radius,start,end);
+    ctx.closePath();
+    ctx.fillStyle   = PALETTE[ci];
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth   = 1;
+    ctx.fill();
+    ctx.stroke();
+    /* texto */
+    ctx.save();
+    ctx.translate(cx,cy);
+    ctx.rotate(start + SLICE/2);
+    ctx.textAlign    = 'right';
+    ctx.fillStyle    = TEXT_COLORS[ci];
+    const lines = SEGMENTS[i].label.split('\n');
+    const fs = Math.max(9, Math.round(size * 0.027));
+    ctx.font = `700 ${fs}px Barlow, sans-serif`;
+    const tr = radius * 0.88;
+    lines.forEach((ln,li)=>{
+      const yOff = (li - (lines.length-1)/2) * (fs * 1.25);
+      ctx.fillText(ln, tr, yOff + fs/3);
+    });
+    ctx.restore();
+  }
+}
+
+/* ── puntos ── */
+let currentPoints = null;
+
+async function fetchPoints(){
+  try {
+    const r = await fetch(`${SCRIPT_URL}?accion=getPuntos&nombre=${encodeURIComponent(alumno.nombre)}`);
+    const d = await r.json();
+    if(d.puntos !== undefined){
+      currentPoints = d.puntos;
+      updateScoreUI(currentPoints, null);
+    }
+  } catch(e){ console.warn('No se pudo obtener puntos:', e); }
+}
+
+async function savePoints(newPts){
+  try {
+    const fd = new FormData();
+    fd.append('accion','updatePuntos');
+    fd.append('nombre', alumno.nombre);
+    fd.append('puntos', newPts);
+    fd.append('reto',   alumno.reto);
+    await fetch(SCRIPT_URL, { method:'POST', body: fd, mode:'no-cors' });
+  } catch(e){ console.warn('No se pudo guardar puntos:', e); }
+}
+
+function updateScoreUI(pts, flash){
+  const el = document.getElementById('score-display');
+  el.textContent = pts !== null ? pts : '—';
+  el.className = 'score-display';
+  if(flash){ el.classList.add(flash); setTimeout(()=>el.classList.remove(flash),1200); }
+}
+
+/* ── voz ── */
+function speak(text){
+  if(!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'es-MX';
+  u.rate = .95;
+  u.pitch = 1.1;
+  u.onerror = ()=>{
+    setTimeout(()=>{
+      const u2 = new SpeechSynthesisUtterance(text);
+      u2.lang = 'es-MX'; u2.rate = .95;
+      window.speechSynthesis.speak(u2);
+    }, 200);
+  };
+  window.speechSynthesis.speak(u);
+}
+
+function buildSpeechText(seg, before, after){
+  if(seg.pts === 'half')   return `Pierdes la mitad de tus puntos. Tienes ${after} puntos.`;
+  if(seg.pts === 'double') return `¡Doble de tus puntos! Ahora tienes ${after} puntos.`;
+  if(seg.pts > 0)  return `¡Ganas ${seg.pts} punto${seg.pts!==1?'s':''}! Ahora tienes ${after}.`;
+  if(seg.pts < 0)  return `Pierdes ${Math.abs(seg.pts)} punto${Math.abs(seg.pts)!==1?'s':''}. Te quedan ${after}.`;
+  return `${seg.label.replace('\n',' ')}. Tienes ${after} puntos.`;
+}
+
+function resultLabel(seg, after){
+  if(seg.pts === 'half')   return `PIERDES LA MITAD → ${after} pts`;
+  if(seg.pts === 'double') return `¡DOBLE! → ${after} pts`;
+  if(seg.pts > 0)  return `+${seg.pts} → ${after} pts`;
+  return `${seg.pts} → ${after} pts`;
+}
+
+/* ── animación de giro ── */
+let spinning = false;
+
+function spin(){
+  if(spinning) return;
+  spinning = true;
+  document.getElementById('btn-spin').disabled = true;
+
+  const targetIndex = Math.floor(Math.random() * N);
+  /* el marcador está en la parte superior (ángulo -PI/2 = -90°).
+     Queremos que el centro de la sección 'targetIndex' quede ahí. */
+  const targetAngle = -(targetIndex + 0.5) * SLICE - Math.PI/2;
+  const extraSpins  = 5 + Math.random() * 4;   /* 5-9 vueltas */
+  const totalRot    = extraSpins * 2 * Math.PI + (targetAngle - (currentAngle % (2*Math.PI)));
+
+  const duration = 4000 + Math.random() * 1500;
+  const start    = performance.now();
+  const startAngle = currentAngle;
+
+  function easeOut(t){ return 1 - Math.pow(1-t, 4); }
+
+  function frame(now){
+    const elapsed = now - start;
+    const t = Math.min(elapsed / duration, 1);
+    currentAngle = startAngle + totalRot * easeOut(t);
+    drawWheel(currentAngle);
+    if(t < 1){
+      requestAnimationFrame(frame);
+    } else {
+      currentAngle = startAngle + totalRot;
+      drawWheel(currentAngle);
+      onSpinEnd(targetIndex);
+    }
+  }
+  requestAnimationFrame(frame);
+}
+
+function onSpinEnd(idx){
+  const seg = SEGMENTS[idx];
+  const before = currentPoints || 0;
+  let after;
+  if(seg.pts === 'half')        after = Math.floor(before / 2);
+  else if(seg.pts === 'double') after = before * 2;
+  else                          after = Math.max(0, before + seg.pts);
+
+  currentPoints = after;
+  updateScoreUI(after, seg.type === 'gain' || seg.pts === 'double' ? 'gain' : 'loss');
+  savePoints(after);
+
+  const resEl = document.getElementById('result-text');
+  resEl.textContent  = resultLabel(seg, after);
+  resEl.className    = `result-text show ${seg.type}`;
+
+  speak(buildSpeechText(seg, before, after));
+  addHistory(seg, after);
+
+  spinning = false;
+  document.getElementById('btn-spin').disabled = false;
+}
+
+/* ── historial ── */
+function addHistory(seg, pts){
+  const list = document.getElementById('history-list');
+  const item = document.createElement('div');
+  item.className = `history-item ${seg.type}-h`;
+  const label = seg.label.replace('\n',' ');
+  item.innerHTML = `<span>${label}</span><span>${pts} pts</span>`;
+  list.prepend(item);
+}
+
+/* ── portal ── */
+document.getElementById('btn-portal').addEventListener('click',()=>{
+  const base = PORTAL_URL;
+  const q = new URLSearchParams({
+    nombre: alumno.nombre, edad: alumno.edad,
+    reto: alumno.reto, estatura: alumno.estatura, peso: alumno.peso
+  });
+  location.href = base + '?' + q.toString();
+});
+
+/* ── aceptar advertencia ── */
+document.getElementById('btn-accept').addEventListener('click',()=>{
+  document.getElementById('overlay').style.display = 'none';
+});
+
+/* ── spin button ── */
+document.getElementById('btn-spin').addEventListener('click', spin);
+
+/* ── inicialización ── */
+window.addEventListener('load', async ()=>{
+  resize();
+  await fetchPoints();
+  document.getElementById('btn-spin').disabled = false;
+});
+window.addEventListener('resize', resize);
+</script>
+</body>
+</html>
