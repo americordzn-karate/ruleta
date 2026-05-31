@@ -700,16 +700,16 @@ function spin() {
     currentAngle = startA + totalRot * easeOut(t);
     drawWheel(currentAngle);
     if (t < 1) { requestAnimationFrame(frame); }
-    else        { currentAngle = finalAngle; drawWheel(currentAngle); onSpinEnd(); }
+    else        { currentAngle = finalAngle; drawWheel(currentAngle); onSpinEnd(targetIdx); }
   })(performance.now());
 }
 
-async function onSpinEnd() {
+async function onSpinEnd(idx) {
   /*
-   * Leemos qué segmento apunta el marcador usando getWinner(),
-   * que es la fuente de verdad independientemente del índice calculado.
+   * idx es el índice que spin() calculó y hacia el cual animó la ruleta.
+   * Es la fuente de verdad: el finalAngle fue construido exactamente para
+   * centrar ese segmento bajo el marcador, así que no hay margen de error.
    */
-  const idx  = getWinner(currentAngle);
   const seg  = SEGMENTS[idx];
   const prev = currentPoints;
 
